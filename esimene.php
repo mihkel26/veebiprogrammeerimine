@@ -1,3 +1,25 @@
+<?php
+	#muutujad
+	$myName = "Mihkel";
+	$myFamilyName = "Mägi";
+	
+	#hindan päeva osa
+	$hourNow = date("H");
+	$partofday = "";
+	if ($hourNow < 8);{
+		$partofday = "varajane hommik";		
+	}
+	if ($hourNow >= 8 and $hourNow < 16){
+		$partofday = "koolipäev";
+	}
+	if ($hourNow > 16) {
+		$partofday = "vaba aeg";
+	}
+	
+	#print $partofday
+?>
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,12 +30,15 @@
 	body {background-color: #93B874;}
 </style>
 <body>
-	<h1>Üks hasti tabav pealkiri!</h1>
+	<h1><?php print $myName ." " . $myFamilyName; ?></h1>
 	<p>See veebileht on loodud õppetöö raames ning ei sisalda mingisugust tõsiseltvoetavat sisu!</p>
 	<p>Koduse too raames lisan hetkel siia leheküljele lambist sisu juurde.</p>
 	<p>Kirjutan veel veidi teksti ajaviiteks juurde ja lisan suvalise gif pildi,</p>
 	<?php
-		echo "Algas PHP õppimine.";
+		echo "<p>Algas PHP õppimine.</p>";
+		echo "<p>Täna on ";
+		echo date("d.m.Y") .", kell oli lehe avamise hetkel " .date("H:i:s");
+		echo ", hetkel on ". $partofday .".</p>";
 	?>
 	<p><font size="-3">
 
