@@ -1,6 +1,43 @@
 <?php 
 	$database = "if17_magimihk";
 	
+	#Alustame sessiooi
+	session_start();
+	
+	#Login func
+	function signin($email, $password){
+		$notice = "";
+		$mysqli = new mysqli($GLOBALS["serverHost"], $GLOBALS["serverUsername"], $GLOBALS["serverPassword"], $GLOBALS["database"]);
+		$stmt = $mysqli->prepare("SELECT id, email, password from vpusers WHERE email = ? ");
+		$stmt -> bind_param("s", $email);
+		$stmt -> bind_result($id, $emailFromDb, $passwordFromDb);
+		$stmt -> execute();
+	
+		
+		
+		#Kontrollime kasutajat
+		if($stmt -> fetch()){
+			$hash = hash("sha512", $password);
+			if ($hash == $passwordFromDb) {
+				$notice = "Kõik korras, logisime sisse!";
+				
+				#Salvestame sessimuutujaid
+				$_SESSION["userId"] = $id;
+				$_SESSION["userEmail"] = $emailFromDb;
+				
+				#Liigume pealehele
+				header("Location: main.php");
+				exit();
+			} else {
+				$notice = "Sisestasite vale parooli!";
+								
+			}
+		} else {
+			$notice = "Sellist kasutajat (".$email .") ei ole!";
+		}
+		return $notice;
+	}
+	
 	# Uue kasutaja andmebaasi lisamine
 	function signup($signupFirstName, $signupFamilyName, $signupBirthDate, $gender, $signupEmail, $signupPassword){
 		# ühendus serveriga

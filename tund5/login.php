@@ -3,6 +3,12 @@
 	require("functions.php");
 	#echo $serverHost;
 
+	#Kui on sisse loginud, siis pealehele
+	if(isset($SESSION["userId"])){
+		header("Location: login.php");
+		exit();
+	}
+	
 	$signupFirstName = "";
 	$signupFamilyName = "";
 	$signupEmail = "";
@@ -13,6 +19,7 @@
 	$signupBirthDate = null;
 	
 	$loginEmail = "";
+	$notice= "";
 	
 	# Vigade muutujad
 	$signupFirstNameError = "";
@@ -22,6 +29,9 @@
 	$signupEmailError = "";
 	$signupPasswordError = "";
 	
+	#Kas logiti sisse
+	if(isset ($_POST["signinButton"])){
+	
 	//kas on kasutajanimi sisestatud
 	if (isset ($_POST["loginEmail"])){
 		if (empty ($_POST["loginEmail"])){
@@ -30,6 +40,14 @@
 			$loginEmail = $_POST["loginEmail"];
 		}
 	}
+	
+	if(!empty($loginEmail) and !empty($_POST["loginPassword"])){
+		#echo "Logime sisse!";
+		$notice = signin($loginEmail, $_POST["loginPassword"]);
+	}
+	
+	} #sisselogimine lõpeb
+
 	
 	#Kas luuakse uut kasutajat, vajutati nuppu?
 	if(isset ($_POST["signupButton"])){
@@ -174,10 +192,10 @@
 	<meta charset="utf-8">
 	<title>Sisselogimine või uue kasutaja loomine</title>
 </head>
-<style>
-	body {background-color: #00ECFF;}
-</style>
+
 <body>
+<body background="555.jpg">
+
 	<h1>Logi sisse!</h1>
 	<p>Siin harjutame sisselogimise funktsionaalsust.</p>
 	
@@ -188,7 +206,7 @@
 		<label>Parool: </label>
 		<input name="loginPassword" placeholder="Salasõna" type="password">
 		<br><br>
-		<input name="signinButton" type="submit" value="Logi sisse">
+		<input name="signinButton" type="submit" value="Logi sisse"> <span> <?php echo $notice ?><span>
 	</form>
 	
 	<h1>Loo kasutaja</h1>
@@ -228,6 +246,6 @@
 		
 		<input name="signupButton" type="submit" value="Loo kasutaja">
 	</form>
-		
+	
 </body>
 </html>
