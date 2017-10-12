@@ -30,8 +30,9 @@
 	<p><a href="main.php">Pealeht</a></p>
 	<hr>
 	<h2>Kõik süsteemi kasutajad</h2>
-	
-	<hr>
+	<table border="1" style="border": 1px solid black; border-collapse: collapse>
+	<?php echo tabel(); ?>
+	</table>
 	
 </body>
 </html>

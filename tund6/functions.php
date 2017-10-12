@@ -43,20 +43,20 @@
 		return $notice;
 	}
 	
-	/*tabel
-	function tabel(){		
-		$stmt = $mysqli->prepare("SELECT id, firstname, lastname, email, gender, birthday FROM vpusers")
-		$stmt -> bind_result($id, $firstnametbl, $lastnametbl, $emailtbl, $gendertbl, $birthdaytbl);
+	function tabel(){
+		$notice = "";
+		$mysqli = new mysqli($GLOBALS["serverHost"], $GLOBALS["serverUsername"], $GLOBALS["serverPassword"], $GLOBALS["database"]);
+		$stmt = $mysqli->prepare("SELECT firstname, lastname, email, gender, birthday FROM vpusers");
+		echo $mysqli->error;
+		$stmt->bind_result($firstname, $lastname, $email, $gender, $birthday);
+		$stmt-> execute();
 		while($stmt->fetch()){
-			<tr>
-			<td>$firstnametbl</td><td>$lastnametbl</td><td>$emailtbl</td></td>$birthdaytbl</td><td>gendertbl</td>
-			</tr>
-        }
-		return $tableinfo
-		
+			$notice .= "<tr><td>".$firstname ."</td><td>".$lastname ."</td><td>".$email ."</td><td>".$gender ."</td><td>".$birthday ."</td></tr>";
+			}
+		$stmt->close();
+		$mysqli->close();
+		return $notice;
 	}
-	*/
-	
 	# Uue kasutaja andmebaasi lisamine
 	function signup($signupFirstName, $signupFamilyName, $signupBirthDate, $gender, $signupEmail, $signupPassword){
 		# ühendus serveriga
