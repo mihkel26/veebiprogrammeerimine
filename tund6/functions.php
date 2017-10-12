@@ -1,6 +1,6 @@
 <?php 
 	$database = "if17_magimihk";
-	
+	require("../../../config.php");
 	#Alustame sessiooi
 	session_start();
 	
@@ -56,22 +56,7 @@
 		
 	}
 	*/
-	function tabel(){
-		$notice = "";
-		$mysqli = new mysqli($GLOBALS["serverHost"], $GLOBALS["serverUsername"], $GLOBALS["serverPassword"], $GLOBALS["database"]);
-		$stmt = $mysqli->prepare("SELECT id, firstname, lastname, email, gender, birthday FROM vpusers");
-		#echo $mysqli->error;
-		$stmt->bind_result($id, $firstname, $lastname, $email, $gender, $birthday);
-		$stmt-> execute();
-		
-		while($stmt->fetch()){
-			$notice .= "<tr><th>".$firstname ."</th><th>".$lastname ."</th><th>".$email ."</th><th>".$gender ."</th><th>".$birthday ."</th></tr>";
-			
-		}
-		
-		$stmt->close();
-		$mysqli->close();
-		return $notice;
+	
 	# Uue kasutaja andmebaasi lisamine
 	function signup($signupFirstName, $signupFamilyName, $signupBirthDate, $gender, $signupEmail, $signupPassword){
 		# ühendus serveriga
@@ -99,7 +84,7 @@
 		$mysqli = new mysqli($GLOBALS["serverHost"], $GLOBALS["serverUsername"], $GLOBALS["serverPassword"], $GLOBALS["database"]);
 		$stmt = $mysqli -> prepare("INSERT INTO userideas (userid, idea, ideacolor) VALUES (?, ?, ?)");
 		echo $mysqli->error;
-		$stmt -> bind_param("iss", $SESSION["userId"], $idea, $color);
+		$stmt -> bind_param("iss", $_SESSION["userId"], $idea, $color);
 		if($stmt-> execute()){
 			$notice = "Mõte on salvestatud!";
 		}	else {
@@ -109,6 +94,39 @@
 		$stmt->close();
 		$mysqli->close();
 		return $notice;
+	}
+	#ideelist
+	function listIdeas(){
+		$notice = "";
+		$mysqli = new mysqli($GLOBALS["serverHost"], $GLOBALS["serverUsername"], $GLOBALS["serverPassword"], $GLOBALS["database"]);
+		#$stmt = $mysqli -> prepare("SELECT idea, ideacolor from userideas");
+		#$stmt = $mysqli -> prepare("SELECT idea, ideacolor from userideas order by id desc");
+		$stmt = $mysqli -> prepare("SELECT idea, ideacolor from userideas where userid = ? order by id desc");
+		echo $mysqli->error;
+		$stmt->bind_param("i", $_SESSION["userId"]);
+		$stmt->bind_result($idea, $color);
+		$stmt-> execute();
+		
+		while($stmt->fetch()){
+			#<p> style="background-color: #ff5567;"> HEA MÕTE </p>
+			$notice .= '<p style="background-color: ' .$color .'">' .$idea . "</p> \n"; 
+			
+		}
+		
+		$stmt->close();
+		$mysqli->close();
+		return $notice;
+	}
+	#viimane idee (avalik)
+	function latestIdea(){
+		$mysqli = new mysqli($GLOBALS["serverHost"], $GLOBALS["serverUsername"], $GLOBALS["serverPassword"], $GLOBALS["database"]);
+		$stmt = $mysqli->prepare("SELECT idea from userideas where id = (select max(id) from userideas)");
+		$stmt->bind_result ($idea);
+		$stmt->execute();
+		$stmt->fetch();
+		$stmt->close();
+		$mysqli->close();
+		return $idea;
 	}
 	#Sisestuse kontrollimine
 	function test_input($data){

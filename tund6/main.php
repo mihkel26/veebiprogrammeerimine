@@ -1,8 +1,8 @@
 <?php
-	#Et pääseks ligi sessile ja funktsioonidele
+	//et pääseks ligi sessioonile ja funktsioonidele
 	require("functions.php");
 	
-	#Kui pole sisse loginud, liigume login lehele
+	//kui pole sisseloginud, liigume login lehele
 	if(!isset($_SESSION["userId"])){
 		header("Location: login.php");
 		exit();
@@ -13,7 +13,6 @@
 		header("Location: login.php");
 		exit();
 	}
-	
 	//muutujad
 	$myName = "Andrus";
 	$myFamilyName = "Rinde";
@@ -44,15 +43,16 @@
 <head>
 	<meta charset="utf-8">
 	<title>
-		Andrus Rinde programmeerib veebi
+		<?php echo $_SESSION["firstname"] ." " .$_SESSION["lastname"]; ?>
+		 veebiprogemise asjad
 	</title>
 </head>
 <body>
 	<h1>Tere, <?php echo $_SESSION["firstname"] ." " .$_SESSION["lastname"]; ?></h1>
 	<p>See veebileht on loodud õppetöö raames ning ei sisalda mingisugust tõsiseltvõetavat sisu!</p>
 	<p><a href="?logout=1">Logi välja!</a></p>
-	<p><a href="usersInfo.php">Tabel</a></p>
-	
+	<p><a href="usersinfo.php">Kasutajate info</a></p>
+	<p><a href="usersideas.php">Head mõtted</a></p>
 	<img src="<?php echo $picDir .$picFile; ?>" alt="Tallinna ülikool">
 </body>
 </html>
