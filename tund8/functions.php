@@ -1,6 +1,6 @@
 <?php 
 	$database = "if17_magimihk";
-	require("../../config.php");
+	require("../../../config.php");
 	#Alustame sessiooi
 	session_start();
 	
@@ -101,15 +101,17 @@
 		$mysqli = new mysqli($GLOBALS["serverHost"], $GLOBALS["serverUsername"], $GLOBALS["serverPassword"], $GLOBALS["database"]);
 		#$stmt = $mysqli -> prepare("SELECT idea, ideacolor from userideas");
 		#$stmt = $mysqli -> prepare("SELECT idea, ideacolor from userideas order by id desc");
-		$stmt = $mysqli -> prepare("SELECT idea, ideacolor from userideas where userid = ? order by id desc");
+		$stmt = $mysqli -> prepare("SELECT id, idea, ideacolor from userideas where userid = ? and deleted IS NULL order by id desc");
 		echo $mysqli->error;
 		$stmt->bind_param("i", $_SESSION["userId"]);
-		$stmt->bind_result($idea, $color);
+		$stmt->bind_result($id, $idea, $color);
 		$stmt-> execute();
 		
 		while($stmt->fetch()){
 			#<p> style="background-color: #ff5567;"> HEA MÕTE </p>
-			$notice .= '<p style="background-color: ' .$color .'">' .$idea . "</p> \n"; 
+			#$notice .= '<p style="background-color: ' .$color .'">' .$idea . "</p> \n"; 
+			#<p> style="background-color: #ff5567;"> HEA MÕTE | <a href="edituseridea.php?id=34">Toimeta</a> </p>
+			$notice .= '<p style="background-color: ' .$color .'">' .$idea .' | <a href="editusersidea.php?id=' .$id . '">Toimeta</a>'. "</p> \n";
 			
 		}
 		
