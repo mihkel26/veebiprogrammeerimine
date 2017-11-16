@@ -52,12 +52,12 @@
 <body background="555.jpg">
 	<h1>Tere, <?php echo $_SESSION["firstname"] ." " .$_SESSION["lastname"]; ?></h1>
 	<p>See veebileht on loodud õppetöö raames ning ei sisalda mingisugust tõsiseltvõetavat sisu!</p>
+	<p><a href="main.php">Avalehele!</a></p>
 	<p><a href="?logout=1">Logi välja!</a></p>
 	<p><a href="usersinfo.php">Kasutajate info</a></p>
 	<p><a href="usersideas.php">Head mõtted</a></p>
-	<p><a href="usersphotos.php">Teiste kasutajate pildid</a></p>
 	<p><a href="uploadphoto.php">UPLOAD.EE</a></p>
-	<p> Sinu 5 viimast üleslaetud pilti: </p>
-	<span><?php echo userPhotos(); ?> </span>
+	<p> Teiste kasutajate pildid: </p>
+	<span><?php echo usersPhotos(); ?> </span>
 </body>
 </html>

@@ -1,6 +1,7 @@
 <?php
 	//et pääseks ligi sessioonile ja funktsioonidele
 	require("functions.php");
+	require("classes/Uploadphoto.class.php");
 	$notice = "";
 	
 	//kui pole sisseloginud, liigume login lehele
@@ -22,23 +23,12 @@
 	$picFileTypes = ["jpg", "jpeg", "png", "gif", "jfif",];
 	$visibility = "";
 	
-	$allFiles = array_slice(scandir($picDir), 2);
-	foreach ($allFiles as $file){
-		$fileType = pathinfo($file, PATHINFO_EXTENSION);
-		if (in_array($fileType, $picFileTypes) == true){
-			array_push($picFiles, $file);
-			
-		}
-			
-	}
 	
-	//$allFiles = scandir($picDir);
-	//var_dump($allFiles);
-	//$picFiles = array_slice($allFiles, 2);
-	//var_dump($picFiles);
-	$picFileCount = count ($picFiles);
-	$picNumber = mt_rand(0, $picFileCount - 1);
-	$picFile = $picFiles [$picNumber];
+	/*klassi esimene näide
+	$esimene = new Uploadphoto("Kaval trikk. ");
+	echo $esimene->testPublic;
+	$teine = new Uploadphoto ("Ja nii juba 2 korda. ");
+	*/
 	
 	//pildi alla laadimine
 	$target_dir = "../../uploadpics/";
@@ -59,8 +49,12 @@
 			//fikseerin failinime
 			$imageFileType = strtolower(pathinfo(basename($_FILES["fileToUpload"]["name"]),PATHINFO_EXTENSION));
 			//$target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
-			$target_file = $target_dir . "hmv_" .(microtime(1) * 10000) ."." .$imageFileType;
+			/*$target_file = $target_dir . "hmv_" .(microtime(1) * 10000) ."." .$imageFileType;
 			$target_file2 = $target_dir2 ."hmv_" .(microtime(1) * 10000) ."." .$imageFileType;
+			*/
+			$target_file ="hmv_" .(microtime(1) * 10000) ."." .$imageFileType;
+			$target_file2 ="hmv_" .(microtime(1) * 10000) ."." .$imageFileType;
+			
 			$filename = "hmv_" .(microtime(1) * 10000) ."." .$imageFileType;
 			$thumbnail = "hmv_" .(microtime(1) * 10000) ."." .$imageFileType;
 		
@@ -69,7 +63,7 @@
 			//$target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
 			$imageFileType = strtolower(pathinfo(basename($_FILES["fileToUpload"]["name"]))["extension"]);
 			$timeStamp = microtime(1) *10000;
-			$target_file = $target_dir ."hmv_" .$timeStamp ."." .$imageFileType;
+			$target_file = "hmv_" .$timeStamp ."." .$imageFileType;
 		
 			$check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
 			if($check !== false) {
@@ -82,11 +76,12 @@
 	}
 	
 	
-			// Kontrollin, kas fail on juba olemas
+			/* Kontrollin, kas fail on juba olemas
 			if (file_exists($target_file)) {
 				$notice .= "Vabandust, fail on juba olemas.";
 				$uploadOk = 0;
-			}
+			}*/
+			
 			
 			// Piiran faili suurust
 			if ($_FILES["fileToUpload"]["size"] > 1000000) {
@@ -106,6 +101,20 @@
 				$notice .= "Vabandame, antud faili ei laetud üles.";
 				// Kui kõik on korras, proovime faili üles laadida.
 			} else {
+				$myPhoto = new Uploadphoto($_FILES["fileToUpload"]["tmp_name"], $imageFileType);
+				$myPhoto -> resizePhoto($maxWidth, $maxHeight);
+				$myPhoto -> addWatermark( "../../graphics/hmv_logo.png", $marginHor, $marginVer);
+				$myPhoto -> addTextWatermark("Pildipealne txt");
+				$notice = $myPhoto -> savePhoto($target_dir, $target_file);
+				#$myPhoto -> saveOriginal($target_dir, $target_file)
+				$myPhoto -> clearImages();
+				
+				unset($myPhoto);
+				
+				
+				
+				
+				
 			/*if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
 				$notice .= "Fail: ". basename( $_FILES["fileToUpload"]["name"]). " on üles laetud!";
 			} else {
@@ -116,7 +125,7 @@
 			
 			#Sõltuvalt failitüübist, loon objekti
 			
-			if($imageFileType == "jpg" or $imageFileType == "jpeg"){
+			/*if($imageFileType == "jpg" or $imageFileType == "jpeg"){
 				$myTempImage = imagecreatefromjpeg($_FILES["fileToUpload"]["tmp_name"]);
 			}
 			
@@ -126,9 +135,9 @@
 			
 			if($imageFileType == "gif"){
 				$myTempImage = imagecreatefromgif($_FILES["fileToUpload"]["tmp_name"]);
-			}
+			}*/
 			
-			#suuruse muutmine
+			/*suuruse muutmine
 			#teeme kindlaks suuruse
 			$imageWidth = imagesx($myTempImage);
 			$imageHeight = imagesy($myTempImage);
@@ -140,23 +149,25 @@
 			}
 			#tekitame uue sobiva pikslikogumi
 			$myImage = resizeImage ($myTempImage, $imageWidth, $imageHeight, round($imageWidth/ $sizeRatio), round($imageHeight / $sizeRatio));
-			$myImage2 = resizeImage2 ($myTempImage, $imageWidth, $imageHeight, round($imageWidth/ $sizeRatio), round($imageHeight / $sizeRatio));
+			$myImage2 = resizeImage ($myTempImage, $imageWidth, $imageHeight, 100, 100);*/
 			
-			#watermark
+			/*#watermark
 			$stamp = imagecreatefrompng("../../graphics/hmv_logo.png");
 			$stampWidth = imagesx($stamp);
 			$stampHeight = imagesy($stamp);
 			$stampX = imagesx($myImage) - $stampWidth - $marginHor;
 			$stampY = imagesy($myImage) - $stampHeight - $marginVer;
-			imagecopy($myImage, $stamp, $stampX, $stampY, 0, 0, $stampWidth, $stampHeight);
+			imagecopy($myImage, $stamp, $stampX, $stampY, 0, 0, $stampWidth, $stampHeight);*/
 			
-			#Teksti watermark
+			/*#Teksti watermark
 			$textToImage = "Nurgatagune Fotopunkt OÜ";
 			#värv
 			$textColor = imagecolorallocatealpha($myImage, 255, 255, 0, 69); #alpha 0-127
 			#mis pildile, suurus, nurk, x, y, cärv, font, txt
 			imagettftext($myImage, 35, -30, 30, 50, $textColor,"../../graphics/ARIALBD.TTF", $textToImage);
+			*/
 			
+			/*
 			#salvestame pildi
 			if($imageFileType == "jpg" or $imageFileType == "jpeg"){
 				if(imagejpeg($myImage, $target_file, 90)){
@@ -196,7 +207,7 @@
 					$notice .= "Tekkis tõrge!";
 				}
 			}
-			
+			*/
 			if (isset($_POST["visibility"]) && !empty($_POST["visibility"])){ //kui on määratud ja pole tühi
 			$visibility = intval($_POST["visibility"]);
 			} else {
@@ -204,11 +215,12 @@
 			}
 			
 			vpphotos($filename, $thumbnail, $visibility);
-			
+				
+				/*
 				#vabastan mälu
 				imagedestroy($myTempImage);
 				imagedestroy($myImage);
-				imagedestroy($stamp);
+				imagedestroy($stamp);*/
 				
 			
 			} #kas saab salvestada
@@ -223,12 +235,12 @@
 		imagecopyresampled($newImage, $image, 0, 0, 0, 0, $w, $h, $origW, $origH);
 		return $newImage;
 	}
-	function resizeImage2($image, $origW, $origH, $w, $h){
+	/*function resizeImage2($image, $origW, $origH, $w, $h){
 		$newImage2 = imagecreatetruecolor(100, 100);
 		#Kuhu, kust, kuhu koordinaatidele x, y ja kust koordinaatidelt x ja y ja kui laialt ja kõrgelt uude kohta, kui laialt ja kõrgelt võtta
 		imagecopyresampled($newImage2, $image, 0, 0, 0, 0, 100, 100, $origW, $origH);
 		return $newImage2;
-	}
+	}*/
 ?>
 
 
